@@ -262,9 +262,8 @@
     </div>
 
     <script>
-        // Links fully updated with your newest unblocked parameters
-        const AUTH_API_URL = "https://script.google.com/macros/s/ACfycbx_F0MuI7OGR4qbvlTsc0Se1-zgLHNjuRivTEFzxFrKvk3P_-UwXSz4Kw5Stl8G2NPocQ/exec";
-        const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbyVBxwo4i0naaAu8e9LvdkBVRMaSJ1NnlGoMLn6h4NReO9yoRIbbjxY-7DaoJtpHt3k5g/exec";
+        // MASTER CENTRAL UNIFIED LINK TARGET MATRIX
+        const MASTER_API_URL = "https://script.google.com/macros/s/AKfycbyVBxwo4i0naaAu8e9LvdkBVRMaSJ1NnlGoMLn6h4NReO9yoRIbbjxY-7DaoJtpHt3k5g/exec";
 
         let currentServiceKey = "";
         let currentServiceBasePrice = 0;
@@ -318,6 +317,7 @@
             });
         }
 
+        // PARAMETER-DRIVEN SIGNUP FLOW (ELIMINATES 405 ERRORS NATIVELY)
         async function handleSignup(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
@@ -327,7 +327,7 @@
             const e = encodeURIComponent(document.getElementById('signup-email').value.trim());
             const p = encodeURIComponent(document.getElementById('signup-pass').value);
 
-            const targetUrl = `${AUTH_API_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
+            const targetUrl = `${MASTER_API_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
 
             try {
                 const response = await fetch(targetUrl);
@@ -339,9 +339,9 @@
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else if (result.message === "TAKEN") { 
-                    throw new Error("USERNAME ALREADY REGISTERED."); 
+                    throw new Error("USERNAME ALREADY TAKEN."); 
                 } else {
-                    throw new Error(result.message || "SIGNUP RESPONSE ERROR.");
+                    throw new Error(result.message || "SIGNUP LINK INTERRUPT.");
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
@@ -349,6 +349,7 @@
             }
         }
 
+        // PARAMETER-DRIVEN LOGIN FLOW
         async function handleLogin(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
@@ -357,7 +358,7 @@
             const u = encodeURIComponent(document.getElementById('login-username').value.trim());
             const p = encodeURIComponent(document.getElementById('login-pass').value);
 
-            const targetUrl = `${AUTH_API_URL}?action=login&username=${u}&password=${p}`;
+            const targetUrl = `${MASTER_API_URL}?action=login&username=${u}&password=${p}`;
 
             try {
                 const response = await fetch(targetUrl);
@@ -369,7 +370,7 @@
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else { 
-                    throw new Error("ACCESS DENIED: NODE REGISTRY REJECTED."); 
+                    throw new Error("ACCESS DENIED: PROFILE NOT FOUND OR WRONG PASSWORD."); 
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
@@ -378,13 +379,13 @@
         }
 
         async function fetchLiveOrders() {
-            if (!ORDER_API_URL) return;
+            if (!MASTER_API_URL) return;
             try {
-                const response = await fetch(ORDER_API_URL);
+                const response = await fetch(MASTER_API_URL);
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Bench lines synchronization offline.", err); }
+            } catch (err) { console.error("Bench lines sync link interrupted.", err); }
         }
 
         function trackOrder() {
@@ -417,7 +418,9 @@
             const msg = document.getElementById('form-status-msg'); const btn = document.getElementById('submit-btn');
             msg.classList.remove('hidden-view', 'border-red-500', 'text-red-400', 'border-emerald-500', 'text-emerald-400');
             msg.classList.add('border-cyan-800', 'text-cyan-400'); msg.innerText = "TRANSMITTING DATA..."; btn.disabled = true;
+            
             const payload = {
+                action: "order",
                 clientName: document.getElementById('client-name').value,
                 clientEmail: document.getElementById('client-email').value,
                 clientPhone: document.getElementById('client-phone').value,
@@ -426,8 +429,9 @@
                 selectedService: currentServiceName,
                 laborEstimate: currentCalculatedPriceString
             };
+
             try {
-                await fetch(ORDER_API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                await fetch(MASTER_API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 msg.className = "mt-4 p-4 border text-center text-xs font-tech uppercase text-emerald-400 border-emerald-500";
                 msg.innerHTML = `<span class="text-xl font-black text-cyan-400 tracking-widest block mb-1">DONE.</span>TRANSMISSION SUCCESSFUL.`;
                 document.getElementById('order-form').reset(); fetchLiveOrders();
