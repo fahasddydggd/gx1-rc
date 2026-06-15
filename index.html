@@ -39,11 +39,11 @@
             width: 100%;
             max-width: 1200px;
             display: grid;
-            grid-template-columns: 1.4fr 1fr;
+            grid-template-columns: 1.5fr 1fr;
             gap: 30px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .dashboard-layout {
                 grid-template-columns: 1fr;
             }
@@ -92,10 +92,14 @@
             color: var(--accent-cyan);
             font-size: 14px;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin: 30px 0 15px 0;
             text-transform: uppercase;
             display: flex;
             align-items: center;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
         }
 
         .section-title::before {
@@ -104,29 +108,59 @@
         }
 
         .info-block {
-            background: rgba(30, 41, 59, 0.3);
+            background: rgba(30, 41, 59, 0.2);
             border-left: 3px solid var(--accent-cyan);
             padding: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-size: 13px;
             line-height: 1.6;
         }
 
-        .info-block ul {
-            list-style: none;
-            margin-top: 10px;
+        /* SERVICES MENU STYLING */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .info-block li {
-            margin-bottom: 6px;
-            color: #94a3b8;
+        .service-card {
+            border: 1px solid var(--border-color);
+            background: rgba(12, 15, 20, 0.6);
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
         }
 
-        .info-block li::before {
-            content: '» ';
+        .service-card:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.01);
+        }
+
+        .service-info h3 {
+            color: var(--text-main);
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .service-info p {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .service-price {
             color: var(--accent-cyan);
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            padding-left: 15px;
         }
 
+        /* FORM STYLING */
         .form-group {
             margin-bottom: 20px;
         }
@@ -195,7 +229,6 @@
             background-color: var(--border-color);
             color: var(--text-muted);
             cursor: not-allowed;
-            box-shadow: none;
         }
 
         .pricing-card {
@@ -238,6 +271,21 @@
             color: var(--accent-red);
         }
 
+        .compliance-list {
+            list-style: none;
+        }
+
+        .compliance-list li {
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .compliance-list li::before {
+            content: '» ';
+            color: var(--accent-cyan);
+        }
+
         .footer {
             grid-column: 1 / -1;
             text-align: center;
@@ -259,17 +307,41 @@
             <p>SECURE SUBMISSION NETWORK v4.0 // INFRASTRUCTURE LIVE</p>
         </div>
 
+        <div class="section-title">Core Lab Manifest</div>
         <div class="info-block">
-            // Full vehicle frame stripping to individual raw plates. Disassembly and scrubbing down of dirt dams, physical integrity scanning for micro carbon cracks, replacement of warped composite elements, structural shock tower realignment, and comprehensive metric rebuilding using precision blue threadlockers.
+            Full vehicle frame stripping to individual raw plates. Disassembly and scrubbing down of dirt dams, physical integrity scanning for micro carbon cracks, replacement of warped composite elements, structural shock tower realignment, and comprehensive metric rebuilding using precision blue threadlockers.
         </div>
 
-        <div class="section-title">Risk Mitigation & Workshop Compliance</div>
-        <div class="info-block" style="border-left-color: var(--accent-red);">
-            <ul>
-                <li>Dropped off directly at our secure lab parameters in Abu Ftaira.</li>
-                <li>Work stops immediately if unmapped structural frame breaks are uncovered.</li>
-                <li>Components must be retrieved within 7 operational calendar days.</li>
-            </ul>
+        <div class="section-title">Available Lab Bench Services</div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-info">
+                    <h3>Basic Bench Routine & Tuning</h3>
+                    <p>Gear mesh alignment, diff oil check, cleanup, and telemetry tuning</p>
+                </div>
+                <div class="service-price">5 KWD</div>
+            </div>
+            <div class="service-card">
+                <div class="service-info">
+                    <h3>Advanced Chassis Overhaul</h3>
+                    <p>Complete strip down, carbon structural scanning, and bearing replacement</p>
+                </div>
+                <div class="service-price">15 KWD</div>
+            </div>
+            <div class="service-card">
+                <div class="service-info">
+                    <h3>Electrical Diagnostics & ESC Re-programming</h3>
+                    <p>Waterproofing evaluation, motor sensor sync, power link isolation</p>
+                </div>
+                <div class="service-price">10 KWD</div>
+            </div>
+            <div class="service-card">
+                <div class="service-info">
+                    <h3>Custom Shock/Suspension Calibration</h3>
+                    <p>Piston rebuilds, progressive spring matching, weight balancing</p>
+                </div>
+                <div class="service-price">8 KWD</div>
+            </div>
         </div>
 
         <div class="section-title">Secure Submission Terminal</div>
@@ -292,13 +364,13 @@
                 </div>
                 <div class="form-group">
                     <label for="vehicle">RC Vehicle Model Details</label>
-                    <input type="text" id="vehicle" required placeholder="e.g. Traxxas Slash 4x4">
+                    <input type="text" id="vehicle" required placeholder="e.g. Traxxas Slash 4x4 / Custom Jet Plane">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="details">Comprehensive Manifest of System Failures</label>
-                <textarea id="details" required placeholder="Describe stripping issues, mechanical lockups, burnt ESC, structural cracks..."></textarea>
+                <textarea id="details" required placeholder="Describe stripping issues, mechanical lockups, burnt ESC, stripped gears, structural cracks..."></textarea>
             </div>
 
             <button type="submit" class="btn-submit" id="submitBtn">Transmit Repair Order Log</button>
@@ -317,15 +389,24 @@
         </div>
 
         <div class="pricing-card">
-            <label>Estimated Total Labor Cost</label>
+            <label>Estimated Base Labor Cost</label>
             <div class="price-display" id="totalPrice">15 KWD</div>
         </div>
 
-        <div class="section-title">Lab Coordinates</div>
-        <div class="info-block">
-            <strong>LOCATION:</strong> Mubarak Al-Kabeer Governorate, Abu Ftaira, Kuwait<br>
-            <strong>SYSTEM:</strong> Linked Live Database Engine<br>
-            <strong>BANDWIDTH:</strong> Infinite Free Routing Architecture
+        <div class="section-title">Workshop Compliance</div>
+        <div class="info-block" style="border-left-color: var(--accent-red); background: rgba(255,59,48,0.02);">
+            <ul class="compliance-list">
+                <li>Dropped off directly at our secure lab parameters in Abu Ftaira.</li>
+                <li>Work stops immediately if unmapped structural frame breaks are uncovered.</li>
+                <li>Components must be retrieved within 7 operational calendar days.</li>
+            </ul>
+        </div>
+
+        <div class="section-title">Lab System Coordinates</div>
+        <div class="info-block" style="border-left-color: #a855f7;">
+            <strong>LOCATION:</strong> Abu Ftaira, Kuwait<br>
+            <strong>DATABASE:</strong> Active Sheet Sync Node<br>
+            <strong>SECURITY:</strong> SSL Endpoints Natively Enforced
         </div>
     </div>
 
