@@ -262,8 +262,8 @@
     </div>
 
     <script>
-        // TARGET CENTRALIZED DATABASE PIPELINE URL LINK
-        const DATABASE_URL = "https://script.google.com/macros/s/ACfycbx_F0MuI7OGR4qbvlTsc0Se1-zgLHNjuRivTEFzxFrKvk3P_-UwXSz4Kw5Stl8G2NPocQ/exec";
+        // MASTER CENTRALIZED LINK MATRIX
+        const DATABASE_URL = "https://script.google.com/macros/s/AKfycbwpAcuFcntG4itHNEtSPxpL9j3qd7Qm0Uh4voDTkPFR52-vacv9OYynORxRBAkh5dbH-g/exec";
 
         let currentServiceKey = "";
         let currentServiceBasePrice = 0;
@@ -317,42 +317,71 @@
             });
         }
 
-        // 🚀 CRITICAL FIX: "FIRE AND FORGET" SILENT SUBMISSION PIPELINE
-        async function handleSignup(event) {
-            event.preventDefault();
-            const chosenUsername = document.getElementById('signup-username').value.trim();
+        // SECURE JSONP COMMUNICATION TUNNEL
+        function executeAuthRequest(url, completionHandler) {
+            const uniqueCallbackName = "gx1_cb_" + Math.round(Math.random() * 1000000);
+            window[uniqueCallbackName] = function(data) {
+                completionHandler(data);
+                document.getElementById(uniqueCallbackName).remove();
+                delete window[uniqueCallbackName];
+            };
+            
+            const separator = url.indexOf('?') !== -1 ? '&' : '?';
+            const finalUrl = url + separator + "callback=" + uniqueCallbackName;
+            
+            const scriptNode = document.createElement('script');
+            scriptNode.id = uniqueCallbackName;
+            scriptNode.src = finalUrl;
+            document.body.appendChild(scriptNode);
+        }
 
-            const u = encodeURIComponent(chosenUsername);
+        function handleSignup(event) {
+            event.preventDefault();
+            const errBox = document.getElementById('auth-error-msg');
+            errBox.classList.add('hidden-view');
+
+            const targetUser = document.getElementById('signup-username').value.trim();
+            const u = encodeURIComponent(targetUser);
             const e = encodeURIComponent(document.getElementById('signup-email').value.trim());
             const p = encodeURIComponent(document.getElementById('signup-pass').value);
 
-            const targetUrl = `${DATABASE_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
+            const checkUrl = `${DATABASE_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
 
-            // mode: 'no-cors' fires data directly into your sheets completely bypassing JSON reader crashes!
-            fetch(targetUrl, { method: 'POST', mode: 'no-cors' });
-
-            // Automatically logs the user in instantly on screen
-            currentUser = chosenUsername; 
-            localStorage.setItem('gx1_user', currentUser);
-            updateAuthNavbarZone(); 
-            closeAuthModal();
+            executeAuthRequest(checkUrl, function(result) {
+                if (result.status === "success") {
+                    currentUser = targetUser;
+                    localStorage.setItem('gx1_user', currentUser);
+                    updateAuthNavbarZone();
+                    closeAuthModal();
+                } else {
+                    errBox.innerText = result.message === "TAKEN" ? "USERNAME ALREADY REGISTERED IN SHEETS." : "REGISTRATION FAILURE.";
+                    errBox.classList.remove('hidden-view');
+                }
+            });
         }
 
-        async function handleLogin(event) {
+        function handleLogin(event) {
             event.preventDefault();
-            const chosenUsername = document.getElementById('login-username').value.trim();
+            const errBox = document.getElementById('auth-error-msg');
+            errBox.classList.add('hidden-view');
 
-            const u = encodeURIComponent(chosenUsername);
+            const targetUser = document.getElementById('login-username').value.trim();
+            const u = encodeURIComponent(targetUser);
             const p = encodeURIComponent(document.getElementById('login-pass').value);
 
-            const targetUrl = `${DATABASE_URL}?action=login&username=${u}&password=${p}`;
+            const checkUrl = `${DATABASE_URL}?action=login&username=${u}&password=${p}`;
 
-            fetch(targetUrl, { method: 'POST', mode: 'no-cors' });
-
-            currentUser = chosenUsername; 
-            localStorage.setItem('gx1_user', currentUser);
-            updateAuthNavbarZone(); 
-            closeAuthModal();
+            executeAuthRequest(checkUrl, function(result) {
+                if (result.status === "success") {
+                    currentUser = targetUser;
+                    localStorage.setItem('gx1_user', currentUser);
+                    updateAuthNavbarZone();
+                    closeAuthModal();
+                } else {
+                    errBox.innerText = "ACCESS DENIED: WRONG PASSWORD OR ACCOUNT UNREGISTERED.";
+                    errBox.classList.remove('hidden-view');
+                }
+            });
         }
 
         async function fetchLiveOrders() {
@@ -362,7 +391,7 @@
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Bench data lines offline.", err); }
+            } catch (err) { console.error("Database connection lost.", err); }
         }
 
         function trackOrder() {
