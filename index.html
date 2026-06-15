@@ -6,67 +6,125 @@
     <title>GX1 RC WORKS // Tactical Lab Terminal</title>
     <style>
         :root {
-            --bg-primary: #0a0c10;
-            --bg-secondary: #0d1117;
+            --bg-primary: #05070a;
+            --bg-secondary: #0c0f14;
             --accent-cyan: #00f0ff;
             --accent-red: #ff3b30;
-            --text-main: #c9d1d9;
-            --text-muted: #8b949e;
-            --border-color: #30363d;
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
+            --grid-color: rgba(0, 240, 255, 0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             background-color: var(--bg-primary);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
             color: var(--text-main);
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
         }
 
-        .terminal-container {
+        .dashboard-layout {
             width: 100%;
-            max-width: 800px;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .main-panel, .side-panel {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 25px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            border-radius: 8px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-panel::before, .side-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), transparent);
         }
 
         .header {
             border-bottom: 2px dashed var(--border-color);
-            padding-bottom: 15px;
+            padding-bottom: 20px;
             margin-bottom: 25px;
         }
 
         .header h1 {
             color: var(--accent-cyan);
-            margin: 0;
-            font-size: 22px;
-            letter-spacing: 2px;
+            font-size: 24px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
         .header p {
             color: var(--text-muted);
-            margin: 5px 0 0 0;
-            font-size: 13px;
+            font-size: 12px;
+            margin-top: 6px;
+            letter-spacing: 1px;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1xl;
-            gap: 15px;
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 15px;
+        .section-title {
+            color: var(--accent-cyan);
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '// ';
+            color: var(--text-muted);
+        }
+
+        .info-block {
+            background: rgba(30, 41, 59, 0.3);
             border-left: 3px solid var(--accent-cyan);
-        }
-
-        .info-item {
+            padding: 15px;
+            margin-bottom: 25px;
             font-size: 13px;
             line-height: 1.6;
+        }
+
+        .info-block ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .info-block li {
+            margin-bottom: 6px;
+            color: #94a3b8;
+        }
+
+        .info-block li::before {
+            content: '» ';
+            color: var(--accent-cyan);
         }
 
         .form-group {
@@ -82,33 +140,33 @@
         label {
             display: block;
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 11px;
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 10px;
-            box-sizing: border-box;
+            padding: 12px;
             font-family: inherit;
             font-size: 14px;
             border-radius: 4px;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.1);
         }
 
         textarea {
             resize: vertical;
-            height: 100px;
+            height: 120px;
         }
 
         .btn-submit {
@@ -116,7 +174,7 @@
             background-color: var(--accent-cyan);
             color: var(--bg-primary);
             border: none;
-            padding: 14px;
+            padding: 16px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
@@ -125,16 +183,41 @@
             border-radius: 4px;
             font-family: inherit;
             margin-top: 10px;
+            transition: all 0.3s ease;
         }
 
         .btn-submit:hover {
             background-color: #00d8e6;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .pricing-card {
+            background: rgba(0, 240, 255, 0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .price-display {
+            font-size: 36px;
+            color: var(--accent-cyan);
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
 
         .status-msg {
             margin-top: 20px;
-            padding: 12px;
+            padding: 14px;
             border-radius: 4px;
             font-size: 13px;
             display: none;
@@ -156,82 +239,124 @@
         }
 
         .footer {
+            grid-column: 1 / -1;
             text-align: center;
             color: var(--text-muted);
             font-size: 11px;
-            margin-top: 30px;
+            margin-top: 20px;
             border-top: 1px solid var(--border-color);
-            padding-top: 15px;
+            padding-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="terminal-container">
-    <div class="header">
-        <h1>GX1 RC WORKS // TACTICAL LAB</h1>
-        <p>SECURE SUBMISSION NETWORK v4.0 // INFRASTRUCTURE LIVE</p>
-    </div>
-
-    <div class="info-grid">
-        <div class="info-item">// <strong>LAB PARAMETERS:</strong> Abu Ftaira, Kuwait</div>
-        <div class="info-item">// <strong>WORKFLOW CONDITIONS:</strong> System teardowns log parameters straight into the GX1 global database tracking node.</div>
-    </div>
-
-    <form id="repairForm">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" required placeholder="e.g. Abdullah">
-            </div>
-            <div class="form-group">
-                <label for="email">Your Email Address</label>
-                <input type="email" id="email" required placeholder="name@example.com">
-            </div>
+<div class="dashboard-layout">
+    
+    <div class="main-panel">
+        <div class="header">
+            <h1>GX1 RC WORKS // TACTICAL LAB</h1>
+            <p>SECURE SUBMISSION NETWORK v4.0 // INFRASTRUCTURE LIVE</p>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="phone">WhatsApp / Phone Number</label>
-                <input type="text" id="phone" required placeholder="e.g. +965 9999 9999">
-            </div>
-            <div class="form-group">
-                <label for="vehicle">RC Vehicle Model Details</label>
-                <input type="text" id="vehicle" required placeholder="e.g. Traxxas Slash 4x4 / Custom Jet Plane">
-            </div>
+        <div class="info-block">
+            // Full vehicle frame stripping to individual raw plates. Disassembly and scrubbing down of dirt dams, physical integrity scanning for micro carbon cracks, replacement of warped composite elements, structural shock tower realignment, and comprehensive metric rebuilding using precision blue threadlockers.
         </div>
 
+        <div class="section-title">Risk Mitigation & Workshop Compliance</div>
+        <div class="info-block" style="border-left-color: var(--accent-red);">
+            <ul>
+                <li>Dropped off directly at our secure lab parameters in Abu Ftaira.</li>
+                <li>Work stops immediately if unmapped structural frame breaks are uncovered.</li>
+                <li>Components must be retrieved within 7 operational calendar days.</li>
+            </ul>
+        </div>
+
+        <div class="section-title">Secure Submission Terminal</div>
+        <form id="repairForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" required placeholder="e.g. Abdullah">
+                </div>
+                <div class="form-group">
+                    <label for="email">Your Email Address</label>
+                    <input type="email" id="email" required placeholder="name@example.com">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">WhatsApp / Phone Number</label>
+                    <input type="text" id="phone" required placeholder="e.g. +965 9999 9999">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle">RC Vehicle Model Details</label>
+                    <input type="text" id="vehicle" required placeholder="e.g. Traxxas Slash 4x4">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="details">Comprehensive Manifest of System Failures</label>
+                <textarea id="details" required placeholder="Describe stripping issues, mechanical lockups, burnt ESC, structural cracks..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">Transmit Repair Order Log</button>
+        </form>
+
+        <div id="statusBanner" class="status-msg"></div>
+    </div>
+
+    <div class="side-panel">
+        <div class="section-title">Operational Urgency Profile</div>
         <div class="form-group">
-            <label for="details">Comprehensive Manifest of System Failures</label>
-            <textarea id="details" required placeholder="Describe stripping issues, mechanical lockups, burnt ESC, stripped gears, structural cracks..."></textarea>
+            <select id="urgencyRate">
+                <option value="15">Standard Bench Routine (3-5 Days)</option>
+                <option value="30">Tactical Hot-Swap (24 Hours / Express)</option>
+            </select>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn">Transmit Repair Order Log</button>
-    </form>
+        <div class="pricing-card">
+            <label>Estimated Total Labor Cost</label>
+            <div class="price-display" id="totalPrice">15 KWD</div>
+        </div>
 
-    <div id="statusBanner" class="status-msg"></div>
+        <div class="section-title">Lab Coordinates</div>
+        <div class="info-block">
+            <strong>LOCATION:</strong> Mubarak Al-Kabeer Governorate, Abu Ftaira, Kuwait<br>
+            <strong>SYSTEM:</strong> Linked Live Database Engine<br>
+            <strong>BANDWIDTH:</strong> Infinite Free Routing Architecture
+        </div>
+    </div>
 
     <div class="footer">
-        GX1 RC WORKS // AUTOMATED LOGGING PIPELINE // NO OUTSIDE REDIRECTS
+        GX1 RC WORKS // AUTOMATED LOGGING PIPELINE // DIGITAL TERMINAL NODE V4.0
     </div>
 </div>
 
 <script>
-    // YOUR LIVE GOOGLE APPS SCRIPT DATABASE ENDPOINT
+    // Live Google Apps Script Deployment API URL
     const GOOGLE_SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbxZv7ZIol8pgfEeH_Hl8ClZqP4YSKjKPe_bykXPkWDla8leUncpWmzHGANPGaTSvPzZ/exec";
 
+    // Pricing Matrix Calculator Core Logic
+    const urgencySelect = document.getElementById('urgencyRate');
+    const priceDisplay = document.getElementById('totalPrice');
+
+    urgencySelect.addEventListener('change', function() {
+        priceDisplay.innerText = this.value + " KWD";
+    });
+
+    // Form Submissions Pipeline Routing Engine
     document.getElementById('repairForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const submitBtn = document.getElementById('submitBtn');
         const statusBanner = document.getElementById('statusBanner');
         
-        // Update UI to show submission in progress
         submitBtn.disabled = true;
         submitBtn.innerText = "TRANSMITTING DATA STREAM...";
         statusBanner.style.display = "none";
 
-        // Package form values cleanly matching JSON parser properties
         const payload = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
@@ -240,29 +365,25 @@
             details: document.getElementById('details').value
         };
 
-        // Fire text payload directly to Google's cloud server engine
         fetch(GOOGLE_SCRIPT_API_URL, {
             method: 'POST',
-            mode: 'no-cors', // Bypasses browser cross-origin preflight locks safely
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload)
         })
         .then(() => {
-            // Because no-cors doesn't return readable status text, a successful handshake defaults here
             statusBanner.className = "status-msg status-success";
             statusBanner.innerText = "TRANSMISSION SUCCESSFUL! LOG DATA WRITTEN TO GX1_DATABASE.";
             statusBanner.style.display = "block";
-            
-            // Clear inputs for the next customer entry
             document.getElementById('repairForm').reset();
         })
         .catch((error) => {
             statusBanner.className = "status-msg status-error";
-            statusBanner.innerText = "CRITICAL SEND FAILURE: CONNECTIVITY TIMEOUT OR MALFORMED PIPELINE.";
+            statusBanner.innerText = "CRITICAL SEND FAILURE: CONNECTIONS TIMEOUT.";
             statusBanner.style.display = "block";
-            console.error('Data pipeline error:', error);
+            console.error('Error:', error);
         })
         .finally(() => {
             submitBtn.disabled = false;
