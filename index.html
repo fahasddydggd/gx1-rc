@@ -262,7 +262,8 @@
     </div>
 
     <script>
-        const AUTH_API_URL = "https://script.google.com/macros/s/AKfycbyAiFDj9vVniMsIyKr8Wl03vHnniGi1z7rPpYrlOM9VsGmhsY05StcMQSB6OOo5w0fpiQ/exec";
+        // Links fully updated with your newest unblocked parameters
+        const AUTH_API_URL = "https://script.google.com/macros/s/ACfycbx_F0MuI7OGR4qbvlTsc0Se1-zgLHNjuRivTEFzxFrKvk3P_-UwXSz4Kw5Stl8G2NPocQ/exec";
         const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbyVBxwo4i0naaAu8e9LvdkBVRMaSJ1NnlGoMLn6h4NReO9yoRIbbjxY-7DaoJtpHt3k5g/exec";
 
         let currentServiceKey = "";
@@ -317,7 +318,6 @@
             });
         }
 
-        // DYNAMIC ALIGNMENT TUNNEL FOR SIGNUP
         async function handleSignup(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
@@ -339,9 +339,9 @@
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else if (result.message === "TAKEN") { 
-                    throw new Error("USERNAME ALREADY TAKEN."); 
+                    throw new Error("USERNAME ALREADY REGISTERED."); 
                 } else {
-                    throw new Error(result.message || "SIGNUP DATA EXCEPTION.");
+                    throw new Error(result.message || "SIGNUP RESPONSE ERROR.");
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
@@ -349,7 +349,6 @@
             }
         }
 
-        // FIXED LOGIN HANDLING PIPELINE (Uses URL Params instead of POST to completely avoid 405 blocks)
         async function handleLogin(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
@@ -358,7 +357,6 @@
             const u = encodeURIComponent(document.getElementById('login-username').value.trim());
             const p = encodeURIComponent(document.getElementById('login-pass').value);
 
-            // Dynamically shifts request into clean GET matrix route 
             const targetUrl = `${AUTH_API_URL}?action=login&username=${u}&password=${p}`;
 
             try {
@@ -371,7 +369,7 @@
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else { 
-                    throw new Error("ACCESS DENIED: PROFILE NOT FOUND OR WRONG PASSWORD."); 
+                    throw new Error("ACCESS DENIED: NODE REGISTRY REJECTED."); 
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
@@ -386,7 +384,7 @@
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Tracking connection failed.", err); }
+            } catch (err) { console.error("Bench lines synchronization offline.", err); }
         }
 
         function trackOrder() {
