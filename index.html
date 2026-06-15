@@ -262,8 +262,8 @@
     </div>
 
     <script>
-        // MASTER CENTRAL UNIFIED LINK TARGET MATRIX
-        const MASTER_API_URL = "https://script.google.com/macros/s/AKfycbyVBxwo4i0naaAu8e9LvdkBVRMaSJ1NnlGoMLn6h4NReO9yoRIbbjxY-7DaoJtpHt3k5g/exec";
+        // TARGET CENTRALIZED DATABASE PIPELINE URL LINK
+        const DATABASE_URL = "https://script.google.com/macros/s/ACfycbx_F0MuI7OGR4qbvlTsc0Se1-zgLHNjuRivTEFzxFrKvk3P_-UwXSz4Kw5Stl8G2NPocQ/exec";
 
         let currentServiceKey = "";
         let currentServiceBasePrice = 0;
@@ -317,7 +317,7 @@
             });
         }
 
-        // PARAMETER-DRIVEN SIGNUP FLOW (ELIMINATES 405 ERRORS NATIVELY)
+        // UNIFIED RE-WRITTEN PARAM PASSING FLOW
         async function handleSignup(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
@@ -327,11 +327,12 @@
             const e = encodeURIComponent(document.getElementById('signup-email').value.trim());
             const p = encodeURIComponent(document.getElementById('signup-pass').value);
 
-            const targetUrl = `${MASTER_API_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
+            const targetUrl = `${DATABASE_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
 
             try {
                 const response = await fetch(targetUrl);
-                const result = await response.json();
+                const text = await response.text(); // Reads raw text output to avoid object mapping crashes
+                const result = JSON.parse(text);
                 
                 if (result.status === "success") {
                     currentUser = document.getElementById('signup-username').value.trim(); 
@@ -341,7 +342,7 @@
                 } else if (result.message === "TAKEN") { 
                     throw new Error("USERNAME ALREADY TAKEN."); 
                 } else {
-                    throw new Error(result.message || "SIGNUP LINK INTERRUPT.");
+                    throw new Error(result.message || "SIGNUP DISPATCH FAULT.");
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
@@ -349,7 +350,6 @@
             }
         }
 
-        // PARAMETER-DRIVEN LOGIN FLOW
         async function handleLogin(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
@@ -358,11 +358,12 @@
             const u = encodeURIComponent(document.getElementById('login-username').value.trim());
             const p = encodeURIComponent(document.getElementById('login-pass').value);
 
-            const targetUrl = `${MASTER_API_URL}?action=login&username=${u}&password=${p}`;
+            const targetUrl = `${DATABASE_URL}?action=login&username=${u}&password=${p}`;
 
             try {
                 const response = await fetch(targetUrl);
-                const result = await response.json();
+                const text = await response.text();
+                const result = JSON.parse(text);
                 
                 if (result.status === "success") {
                     currentUser = document.getElementById('login-username').value.trim(); 
@@ -379,13 +380,13 @@
         }
 
         async function fetchLiveOrders() {
-            if (!MASTER_API_URL) return;
+            if (!DATABASE_URL) return;
             try {
-                const response = await fetch(MASTER_API_URL);
+                const response = await fetch(DATABASE_URL);
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Bench lines sync link interrupted.", err); }
+            } catch (err) { console.error("Bench data offline.", err); }
         }
 
         function trackOrder() {
@@ -431,7 +432,7 @@
             };
 
             try {
-                await fetch(MASTER_API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                await fetch(DATABASE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 msg.className = "mt-4 p-4 border text-center text-xs font-tech uppercase text-emerald-400 border-emerald-500";
                 msg.innerHTML = `<span class="text-xl font-black text-cyan-400 tracking-widest block mb-1">DONE.</span>TRANSMISSION SUCCESSFUL.`;
                 document.getElementById('order-form').reset(); fetchLiveOrders();
