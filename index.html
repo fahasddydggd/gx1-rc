@@ -62,7 +62,7 @@
 
             <section class="glass-panel p-6 rounded-2xl border border-cyan-500/20 glow-blue">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
+                    <div class="flex-grow">
                         <h2 class="font-tech font-bold text-sm tracking-widest text-cyan-400 uppercase">Live Bench Tracker</h2>
                         <p class="text-xs text-gray-400">Type your Ticket ID (e.g., <span class="text-cyan-400/80">GX-1001</span>) to access your standalone order matrix invoice page.</p>
                     </div>
@@ -71,6 +71,7 @@
                         <button onclick="trackOrder()" class="bg-cyan-950/60 border border-cyan-500 text-cyan-400 px-4 py-2 rounded text-xs font-tech tracking-wide hover:bg-cyan-500 hover:text-black transition uppercase">Scan</button>
                     </div>
                 </div>
+                <div id="tracker-error-msg" class="hidden-view mt-4 p-2 border border-red-900 bg-red-950/20 text-red-400 text-center text-xs font-tech uppercase"></div>
             </section>
 
             <div>
@@ -260,10 +261,8 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONNECTED DATA SYSTEMS ROUTING LINKS
-        // ==========================================
-        const AUTH_API_URL = "https://script.google.com/macros/s/AKfycbyC_SsM2ForQWCzXX_sFHbxsjaWt9YF5ny6dlodQJwHembQ-mC4kF9s_0VZBVadyG5AAw/exec";
+        // CONFIG INTERFACES
+        const AUTH_API_URL = "https://script.google.com/macros/s/AKfycbyAiFDj9vVniMsIyKr8Wl03vHnniGi1z7rPpYrlOM9VsGmhsY05StcMQSB6OOo5w0fpiQ/exec";
         const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbyVBxwo4i0naaAu8e9LvdkBVRMaSJ1NnlGoMLn6h4NReO9yoRIbbjxY-7DaoJtpHt3k5g/exec";
 
         let currentServiceKey = "";
@@ -318,13 +317,10 @@
             });
         }
 
-        // LIVE SIGNUP HANDLER (FIXED FOR CORRECT PILES)
         async function handleSignup(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
-            const btn = document.getElementById('signup-submit-btn');
-            errBox.classList.add('hidden-view'); 
-            btn.disabled = true;
+            errBox.classList.add('hidden-view');
 
             const payload = {
                 action: "signup",
@@ -334,10 +330,7 @@
             };
 
             try {
-                const response = await fetch(AUTH_API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
+                const response = await fetch(AUTH_API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await response.json();
                 
                 if (result.status === "success") {
@@ -346,35 +339,24 @@
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else if (result.message === "TAKEN") { 
-                    throw new Error("USERNAME ALREADY ASSIGNED IN LAB REGISTRIES."); 
+                    throw new Error("USERNAME ALREADY REGISTERED."); 
                 } else {
-                    throw new Error(result.message || "SIGNUP DATA FAULT.");
+                    throw new Error(result.message || "SIGNUP FAILURE ERROR.");
                 }
             } catch (err) { 
                 errBox.innerText = err.message || "SIGNUP DISCONNECT."; 
                 errBox.classList.remove('hidden-view'); 
-            } // Removed the broken code token that was causing the freeze
-            finally { btn.disabled = false; }
+            }
         }
 
         async function handleLogin(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
-            const btn = document.getElementById('login-submit-btn');
-            errBox.classList.add('hidden-view'); 
-            btn.disabled = true;
+            errBox.classList.add('hidden-view');
 
-            const payload = { 
-                action: "login", 
-                username: document.getElementById('login-username').value.trim(), 
-                password: document.getElementById('login-pass').value 
-            };
-
+            const payload = { action: "login", username: document.getElementById('login-username').value.trim(), password: document.getElementById('login-pass').value };
             try {
-                const response = await fetch(AUTH_API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload) 
-                });
+                const response = await fetch(AUTH_API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await response.json();
                 if (result.status === "success") {
                     currentUser = payload.username; 
@@ -382,12 +364,12 @@
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else { 
-                    throw new Error("ACCESS DENIED: ACCOUNT NOT FOUND OR INVALID CREDENTIAL ENCRYPTION."); 
+                    throw new Error("ACCESS DENIED: ACCOUNT NOT FOUND OR INCORRECT PASSPHRASE."); 
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
                 errBox.classList.remove('hidden-view'); 
-            } finally { btn.disabled = false; }
+            }
         }
 
         async function fetchLiveOrders() {
@@ -397,23 +379,33 @@
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Tracking sheet datalink offline.", err); }
+            } catch (err) { console.error("Tracking datalink sync offline.", err); }
         }
 
         function trackOrder() {
             const id = document.getElementById('tracker-input').value.trim().toUpperCase();
-            if (!id || !liveDatabaseOrders[id]) { alert("TICKET REF NUMBER UNLISTED INSIDE ACTIVE DATABASES."); return; }
-            const t = liveDatabaseOrders[id];
-            document.getElementById('invoice-ticket-id').innerText = id;
-            document.getElementById('invoice-status-badge').innerText = t.status;
-            document.getElementById('invoice-model').innerText = t.rcModel;
-            document.getElementById('invoice-service').innerText = t.service;
-            document.getElementById('invoice-progress').innerText = t.progress;
-            document.getElementById('invoice-cost').innerText = t.cost;
-            document.getElementById('invoice-notes').innerText = t.notes;
-            document.getElementById('home-view').classList.add('hidden-view');
-            document.getElementById('detail-view').classList.add('hidden-view');
-            document.getElementById('ticket-view').classList.remove('hidden-view');
+            const errBanner = document.getElementById('tracker-error-msg');
+            errBanner.classList.add('hidden-view');
+
+            if (!id) return;
+            
+            if (liveDatabaseOrders[id]) {
+                const t = liveDatabaseOrders[id];
+                document.getElementById('invoice-ticket-id').innerText = id;
+                document.getElementById('invoice-status-badge').innerText = t.status;
+                document.getElementById('invoice-model').innerText = t.rcModel;
+                document.getElementById('invoice-service').innerText = t.service;
+                document.getElementById('invoice-progress').innerText = t.progress;
+                document.getElementById('invoice-cost').innerText = t.cost;
+                document.getElementById('invoice-notes').innerText = t.notes;
+                document.getElementById('home-view').classList.add('hidden-view');
+                document.getElementById('detail-view').classList.add('hidden-view');
+                document.getElementById('ticket-view').classList.remove('hidden-view');
+            } else {
+                // If it isn't real or non-existing, display notice
+                errBanner.innerText = "TICKET REFERENCE ID NOT FOUND. DOUBLE CHECK YOUR ENTRY MATRIX.";
+                errBanner.classList.remove('hidden-view');
+            }
         }
 
         async function submitOrder(e) {
