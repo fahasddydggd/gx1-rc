@@ -115,8 +115,29 @@
                 <div class="text-[11px] font-tech text-cyan-400 uppercase tracking-wider">Initialize Diagnostics →</div>
             </div>
 
+            <div onclick="showService('nitro')" class="glass-panel p-6 rounded-xl cursor-pointer transition duration-300 transform hover:-translate-y-1">
+                <div class="flex justify-between items-start mb-4"><div class="text-3xl text-cyan-400">🔥</div><span class="text-[10px] font-tech text-cyan-600 tracking-widest">SYS_NITR_V6</span></div>
+                <h3 class="text-lg font-bold font-tech text-white mb-2">Nitro Engine Overhauls</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-4">Piston pinch adjustment, sleeve honing, carburetor tracking, and compression seals.</p>
+                <div class="text-[11px] font-tech text-cyan-400 uppercase tracking-wider">Initialize Diagnostics →</div>
+            </div>
+
+            <div onclick="showService('composites')" class="glass-panel p-6 rounded-xl cursor-pointer transition duration-300 transform hover:-translate-y-1">
+                <div class="flex justify-between items-start mb-4"><div class="text-3xl text-cyan-400">💎</div><span class="text-[10px] font-tech text-cyan-600 tracking-widest">SYS_COMP_V7</span></div>
+                <h3 class="text-lg font-bold font-tech text-white mb-2">Carbon Fiber & Composites</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-4">Custom structural plate weaving, fracture sealing, and weight-reduction scaling.</p>
+                <div class="text-[11px] font-tech text-cyan-400 uppercase tracking-wider">Initialize Diagnostics →</div>
+            </div>
+
+            <div onclick="showService('paint')" class="glass-panel p-6 rounded-xl cursor-pointer transition duration-300 transform hover:-translate-y-1">
+                <div class="flex justify-between items-start mb-4"><div class="text-3xl text-cyan-400">🎨</div><span class="text-[10px] font-tech text-cyan-600 tracking-widest">SYS_PNT_V8</span></div>
+                <h3 class="text-lg font-bold font-tech text-white mb-2">Scale Paint & Aero Body</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-4">Lexan airbrushing layouts, downforce trimming blueprints, and structural body armor mounting.</p>
+                <div class="text-[11px] font-tech text-cyan-400 uppercase tracking-wider">Initialize Diagnostics →</div>
+            </div>
+
             <div onclick="showService('diagnostic')" class="glass-panel p-6 rounded-xl cursor-pointer transition duration-300 transform hover:-translate-y-1">
-                <div class="flex justify-between items-start mb-4"><div class="text-3xl text-cyan-400">🎯</div><span class="text-[10px] font-tech text-cyan-600 tracking-widest">SYS_DIAG_V6</span></div>
+                <div class="flex justify-between items-start mb-4"><div class="text-3xl text-cyan-400">🎯</div><span class="text-[10px] font-tech text-cyan-600 tracking-widest">SYS_DIAG_V9</span></div>
                 <h3 class="text-lg font-bold font-tech text-white mb-2">Diagnostic Checks</h3>
                 <p class="text-gray-400 text-xs leading-relaxed mb-4">Electronic loop tests, spectrum signal analysis, and structural fatigue evaluation.</p>
                 <div class="text-[11px] font-tech text-cyan-400 uppercase tracking-wider">Initialize Diagnostics →</div>
@@ -180,7 +201,7 @@
                                 TRANSMIT REPAIR ORDER LOG
                             </button>
                         </form>
-                        <div id="form-status-msg" class="hidden-view mt-4 p-3 border text-center text-xs font-tech uppercase"></div>
+                        <div id="form-status-msg" class="hidden-view mt-4 p-4 border text-center text-xs font-tech uppercase"></div>
                     </div>
 
                 </div>
@@ -235,10 +256,12 @@
             tuning: { icon: "🚀", title: "Performance Tuning", price: 20, process: "Shock configurations fully evacuated, vacuum bled, and refilled with high-stability silicone dampening fluids tailored to vehicle load. Planetary gear diff unsealing, planetary shim modifications to remove lash play, and packing with heavy viscosity diff lubricants.", terms: [ "Target surface geometry profile must be specified.", "Baseline weights configured according to custom specification manifests.", "Tuning presets do not shield components against subsequent hard environmental impacts." ] },
             drivetrain: { icon: "⚙️", title: "Drivetrain Repairs", price: 12, process: "Evaluation of outdrive cup wear profiles, CV joint reconstruction, and center shaft straightness balancing. Gear meshes are calibrated using microscopic shim rings to secure clean teeth engagement. Factory steel shield bearings swapped for low-drag ceramic options.", terms: [ "Base line pricing covers labor metrics; fully stripped configurations require extra parts sourcing.", "Provide explicit manufacturer schematics if dealing with rare mechanical configurations." ] },
             power: { icon: "🔋", title: "Power Conversions", price: 18, process: "Extracting legacy brushed motor pods and modifying engine bay allocations to secure high-power modern brushless electronics. Gear step ratios re-engineered using advanced mathematical calculations.", terms: [ "Payload systems can be supplied directly by user or pre-financed.", "GX1 assumes no liability for immediate factory polymer gear failures under brushless power profiles." ] },
+            nitro: { icon: "🔥", title: "Nitro Engine Overhauls", price: 25, process: "Complete nitro engine block tear down, precision sleeve pinching to restore sleeve-to-piston fitment, carburetor sealing, crank shaft bearing flush, and tuning back up to stable operational RPM bands.", terms: [ "User must supply specific fuel nitro mixture parameters.", "Excludes damage caused by catastrophic connecting rod failures post-delivery." ] },
+            composites: { icon: "💎", title: "Carbon Fiber & Composites", price: 22, process: "Cutting custom thickness carbon plates, sanding high-stress edges to clear fracture lines, layout binding via high-strength resin treatments, and setting custom shock tower geometric profiles.", terms: [ "Custom design layouts must provide baseline wheelbase constraints.", "Warped structural layers cannot be partially fixed; require fresh layout runs." ] },
+            paint: { icon: "🎨", title: "Scale Paint & Aero Body", price: 15, process: "Polycarbonate shell trimming, structural reinforcing using high-strength shoe-goo and fiber tapes, premium airbrushed scale line designs, and aerodynamic wing leveling modifications.", terms: [ "Include custom color palette hex profiles if matching explicit racing teams.", "Paint durability metrics do not guarantee zero scraping under concrete impact forces." ] },
             diagnostic: { icon: "🎯", title: "Diagnostic Checks", price: 5, process: "A complete physical, signal, and power path diagnostics evaluation. Component loads are analyzed under stress limits to identify signal dropping trends, tracking friction variables, and thermal anomalies.", terms: [ "Diagnostic base fees are completely zeroed out if the client executes the recommended repair profile.", "Includes a full digital tracking write-up mapping overall vehicle health metrics." ] }
         };
 
-        // Fetch real-time live tracker records directly from the database sheet
         async function fetchLiveOrders() {
             if (!GOOGLE_SCRIPT_API_URL || GOOGLE_SCRIPT_API_URL.includes("YOUR_")) return;
             try {
@@ -282,6 +305,7 @@
             const btn = document.getElementById('submit-btn');
             
             msg.classList.remove('hidden-view', 'border-red-500', 'text-red-400', 'border-emerald-500', 'text-emerald-400');
+            msg.gridClassName = "";
             msg.classList.add('border-cyan-800', 'text-cyan-400');
             msg.innerText = "TRANSMITTING DATA TO DATALINK MATRIX...";
             btn.disabled = true;
@@ -297,7 +321,6 @@
             };
 
             try {
-                // Configured with 'no-cors' mode to pass browser CORS blocks safely when dealing with Apps Script POST redirects
                 await fetch(GOOGLE_SCRIPT_API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -307,10 +330,9 @@
                     body: JSON.stringify(payload)
                 });
                 
-                // Since 'no-cors' responses are opaque, we handle successful tracking transition natively right here
                 msg.classList.replace('text-cyan-400', 'text-emerald-400');
                 msg.classList.replace('border-cyan-800', 'border-emerald-500');
-                msg.innerHTML = `TRANSMISSION SUCCESSFUL.<br>ORDER ROUTED INTO QUEUE MATRIX.<br>Check your spreadsheet database node for logs.`;
+                msg.innerHTML = `<span class="text-xl font-black text-cyan-400 tracking-widest block mb-1">DONE.</span>TRANSMISSION SUCCESSFUL.<br>ORDER ROUTED INTO QUEUE MATRIX.<br>Check your spreadsheet database node for logs.`;
                 document.getElementById('order-form').reset();
                 fetchLiveOrders(); 
             } catch (err) {
