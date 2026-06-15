@@ -203,7 +203,8 @@
 
     <div id="auth-modal" class="hidden-view fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-2xl w-full max-w-sm relative">
-            <button onclick="closeAuthModal()" class="absolute top-3 right-5 text-red-500 hover:text-red-400 text-3xl font-black transition z-50">&times;</button>
+            <button onclick="closeAuthModal()" class="absolute -top-3 -right-3 bg-red-600 hover:bg-red-500 text-black text-2xl font-black h-10 w-10 rounded-full flex items-center justify-center transition border border-red-400 shadow-xl z-50">&times;</button>
+            
             <div class="flex border-b border-cyan-950 mb-6 text-xs font-tech uppercase tracking-wider">
                 <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 pb-2 border-b-2 border-cyan-400 text-cyan-400 font-bold">Login</button>
                 <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 pb-2 text-gray-500 hover:text-gray-300">Sign Up</button>
@@ -242,7 +243,7 @@
 
     <div id="cart-modal" class="hidden-view fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-2xl w-full max-w-md relative">
-            <button onclick="toggleCartModal()" class="absolute top-3 right-5 text-red-500 hover:text-red-400 text-3xl font-black transition z-50">&times;</button>
+            <button onclick="toggleCartModal()" class="absolute -top-3 -right-3 bg-red-600 hover:bg-red-500 text-black text-2xl font-black h-10 w-10 rounded-full flex items-center justify-center transition border border-red-400 shadow-xl z-50">&times;</button>
             <h3 class="font-tech font-black text-cyan-400 tracking-wider text-sm mb-4">// LAB CART STORAGE</h3>
             <div id="cart-items-list" class="space-y-3 text-xs mb-6 max-h-60 overflow-y-auto pr-2"></div>
             <div class="border-t border-cyan-950 pt-4 flex justify-between items-center text-xs">
@@ -254,7 +255,7 @@
 
     <div id="wishlist-modal" class="hidden-view fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-2xl w-full max-w-md relative">
-            <button onclick="toggleWishlistModal()" class="absolute top-3 right-5 text-red-500 hover:text-red-400 text-3xl font-black transition z-50">&times;</button>
+            <button onclick="toggleWishlistModal()" class="absolute -top-3 -right-3 bg-red-600 hover:bg-red-500 text-black text-2xl font-black h-10 w-10 rounded-full flex items-center justify-center transition border border-red-400 shadow-xl z-50">&times;</button>
             <h3 class="font-tech font-black text-gray-400 tracking-wider text-sm mb-4">// SYSTEM WISHLIST FILINGS</h3>
             <div id="wishlist-items-list" class="space-y-3 text-xs max-h-64 overflow-y-auto pr-2"></div>
         </div>
@@ -316,35 +317,35 @@
             });
         }
 
-        // CORRECTED SIGNUP FORWARD ENGINE PIPELINE
+        // RE-ENGINEERED TO PREVENT 405 METHODS ERRORS
         async function handleSignup(event) {
             event.preventDefault();
             const errBox = document.getElementById('auth-error-msg'); 
             errBox.classList.add('hidden-view');
 
-            const payload = {
-                action: "signup",
-                username: document.getElementById('signup-username').value.trim(),
-                email: document.getElementById('signup-email').value.trim(),
-                password: document.getElementById('signup-pass').value
-            };
+            const u = encodeURIComponent(document.getElementById('signup-username').value.trim());
+            const e = encodeURIComponent(document.getElementById('signup-email').value.trim());
+            const p = encodeURIComponent(document.getElementById('signup-pass').value);
+
+            // Bypasses JSON block issues entirely by passing args down URL structures
+            const targetUrl = `${AUTH_API_URL}?action=signup&username=${u}&email=${e}&password=${p}`;
 
             try {
-                // Enabled mode rules to securely map to your deployment
-                const response = await fetch(AUTH_API_URL, { 
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload) 
-                });
+                const response = await fetch(targetUrl);
+                const result = await response.json();
                 
-                // For no-cors modes, treat execution flow as successfully appended
-                currentUser = payload.username; 
-                localStorage.setItem('gx1_user', currentUser);
-                updateAuthNavbarZone(); 
-                closeAuthModal();
+                if (result.status === "success") {
+                    currentUser = document.getElementById('signup-username').value.trim(); 
+                    localStorage.setItem('gx1_user', currentUser);
+                    updateAuthNavbarZone(); 
+                    closeAuthModal();
+                } else if (result.message === "TAKEN") { 
+                    throw new Error("USERNAME ALREADY REGISTERED."); 
+                } else {
+                    throw new Error(result.message || "SIGNUP DISPATCH FAULT.");
+                }
             } catch (err) { 
-                errBox.innerText = "AUTHENTICATION HANDSHAKE TIMEOUT."; 
+                errBox.innerText = err.message; 
                 errBox.classList.remove('hidden-view'); 
             }
         }
@@ -354,17 +355,21 @@
             const errBox = document.getElementById('auth-error-msg'); 
             errBox.classList.add('hidden-view');
 
-            const payload = { action: "login", username: document.getElementById('login-username').value.trim(), password: document.getElementById('login-pass').value };
+            const u = encodeURIComponent(document.getElementById('login-username').value.trim());
+            const p = encodeURIComponent(document.getElementById('login-pass').value);
+
+            const targetUrl = `${AUTH_API_URL}?action=login&username=${u}&password=${p}`;
+
             try {
-                const response = await fetch(AUTH_API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const response = await fetch(targetUrl);
                 const result = await response.json();
                 if (result.status === "success") {
-                    currentUser = payload.username; 
+                    currentUser = document.getElementById('login-username').value.trim(); 
                     localStorage.setItem('gx1_user', currentUser);
                     updateAuthNavbarZone(); 
                     closeAuthModal();
                 } else { 
-                    throw new Error("ACCESS DENIED: ACCOUNT NOT FOUND OR INCORRECT PASSPHRASE."); 
+                    throw new Error("ACCESS DENIED: ACCOUNT NOT FOUND OR INVALID CREDENTIALS."); 
                 }
             } catch (err) { 
                 errBox.innerText = err.message; 
@@ -379,7 +384,7 @@
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Tracking sheet data line offline.", err); }
+            } catch (err) { console.error("Tracking datalink sync offline.", err); }
         }
 
         function trackOrder() {
@@ -402,7 +407,6 @@
                 document.getElementById('detail-view').classList.add('hidden-view');
                 document.getElementById('ticket-view').classList.remove('hidden-view');
             } else {
-                // Invalidation alert banner triggers here
                 errBanner.innerText = "TICKET SEQUENCE ID NOT FOUND. DOUBLE CHECK YOUR ENTRY MATRIX.";
                 errBanner.classList.remove('hidden-view');
             }
