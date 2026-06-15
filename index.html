@@ -261,7 +261,7 @@
 
     <script>
         // ==========================================
-        // 🔐 TUNNEL INTERFACE PIPELINE LINKS
+        // CONNECTED DATA SYSTEMS ROUTING LINKS
         // ==========================================
         const AUTH_API_URL = "https://script.google.com/macros/s/AKfycbyC_SsM2ForQWCzXX_sFHbxsjaWt9YF5ny6dlodQJwHembQ-mC4kF9s_0VZBVadyG5AAw/exec";
         const ORDER_API_URL = "https://script.google.com/macros/s/AKfycbyVBxwo4i0naaAu8e9LvdkBVRMaSJ1NnlGoMLn6h4NReO9yoRIbbjxY-7DaoJtpHt3k5g/exec";
@@ -318,39 +318,76 @@
             });
         }
 
-        async function handleSignup(e) {
-            e.preventDefault();
-            const errBox = document.getElementById('auth-error-msg'); const btn = document.getElementById('signup-submit-btn');
-            errBox.classList.add('hidden-view'); btn.disabled = true;
+        // LIVE SIGNUP HANDLER (FIXED FOR CORRECT PILES)
+        async function handleSignup(event) {
+            event.preventDefault();
+            const errBox = document.getElementById('auth-error-msg'); 
+            const btn = document.getElementById('signup-submit-btn');
+            errBox.classList.add('hidden-view'); 
+            btn.disabled = true;
+
             const payload = {
                 action: "signup",
                 username: document.getElementById('signup-username').value.trim(),
                 email: document.getElementById('signup-email').value.trim(),
                 password: document.getElementById('signup-pass').value
             };
+
             try {
-                const response = await fetch(AUTH_API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const response = await fetch(AUTH_API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
                 const result = await response.json();
+                
                 if (result.status === "success") {
-                    currentUser = payload.username; localStorage.setItem('gx1_user', currentUser);
-                    updateAuthNavbarZone(); mercantileNodeDismiss(); closeAuthModal();
-                } else if (result.message === "TAKEN") { throw new Error("USERNAME ALREADY ASSIGNED."); }
-            } catch (err) { errBox.innerText = err.message || "SIGNUP FAILED."; errBox.classList.remove('hidden-view'); } finally { btn.disabled = false; }
+                    currentUser = payload.username; 
+                    localStorage.setItem('gx1_user', currentUser);
+                    updateAuthNavbarZone(); 
+                    closeAuthModal();
+                } else if (result.message === "TAKEN") { 
+                    throw new Error("USERNAME ALREADY ASSIGNED IN LAB REGISTRIES."); 
+                } else {
+                    throw new Error(result.message || "SIGNUP DATA FAULT.");
+                }
+            } catch (err) { 
+                errBox.innerText = err.message || "SIGNUP DISCONNECT."; 
+                errBox.classList.remove('hidden-view'); 
+            } // Removed the broken code token that was causing the freeze
+            finally { btn.disabled = false; }
         }
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            const errBox = document.getElementById('auth-error-msg'); const btn = document.getElementById('login-submit-btn');
-            errBox.classList.add('hidden-view'); btn.disabled = true;
-            const payload = { action: "login", username: document.getElementById('login-username').value.trim(), password: document.getElementById('login-pass').value };
+        async function handleLogin(event) {
+            event.preventDefault();
+            const errBox = document.getElementById('auth-error-msg'); 
+            const btn = document.getElementById('login-submit-btn');
+            errBox.classList.add('hidden-view'); 
+            btn.disabled = true;
+
+            const payload = { 
+                action: "login", 
+                username: document.getElementById('login-username').value.trim(), 
+                password: document.getElementById('login-pass').value 
+            };
+
             try {
-                const response = await fetch(AUTH_API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const response = await fetch(AUTH_API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
                 const result = await response.json();
                 if (result.status === "success") {
-                    currentUser = payload.username; localStorage.setItem('gx1_user', currentUser);
-                    updateAuthNavbarZone(); closeAuthModal();
-                } else { throw new Error("ACCESS DENIED: NODE RECORD CLEARANCE INVALID."); }
-            } catch (err) { errBox.innerText = err.message; errBox.classList.remove('hidden-view'); } finally { btn.disabled = false; }
+                    currentUser = payload.username; 
+                    localStorage.setItem('gx1_user', currentUser);
+                    updateAuthNavbarZone(); 
+                    closeAuthModal();
+                } else { 
+                    throw new Error("ACCESS DENIED: ACCOUNT NOT FOUND OR INVALID CREDENTIAL ENCRYPTION."); 
+                }
+            } catch (err) { 
+                errBox.innerText = err.message; 
+                errBox.classList.remove('hidden-view'); 
+            } finally { btn.disabled = false; }
         }
 
         async function fetchLiveOrders() {
@@ -360,12 +397,12 @@
                 liveDatabaseOrders = {};
                 const data = await response.json();
                 data.forEach(order => { liveDatabaseOrders[order.ticketId] = order; });
-            } catch (err) { console.error("Tracking datalink unready.", err); }
+            } catch (err) { console.error("Tracking sheet datalink offline.", err); }
         }
 
         function trackOrder() {
             const id = document.getElementById('tracker-input').value.trim().toUpperCase();
-            if (!id || !liveDatabaseOrders[id]) { alert("TICKET IDENTIFIER SELECTION RECORD EMPTY."); return; }
+            if (!id || !liveDatabaseOrders[id]) { alert("TICKET REF NUMBER UNLISTED INSIDE ACTIVE DATABASES."); return; }
             const t = liveDatabaseOrders[id];
             document.getElementById('invoice-ticket-id').innerText = id;
             document.getElementById('invoice-status-badge').innerText = t.status;
@@ -429,7 +466,7 @@
         function updateAuthNavbarZone() {
             const z = document.getElementById('auth-zone');
             if (currentUser) {
-                z.innerHTML = `<div class='flex items-center space-x-2 border border-cyan-950 p-1.5 rounded text-xs'><span class='text-gray-500'>NODE:</span><span class='text-cyan-400 font-bold uppercase'>${currentUser}</span><button onclick='handleLogout()' class='text-red-400 font-bold pl-2 border-l border-cyan-950 uppercase'>Exit</button></div>`;
+                z.innerHTML = `<div class='flex items-center space-x-2 border border-cyan-950 p-1.5 rounded text-xs'><span class='text-gray-500'>NODE:</span><span class='text-cyan-400 font-bold uppercase'>${currentUser}</span><button onclick='handleLogout()' class='text-red-400 font-bold pl-2 border-l border-l-cyan-950 uppercase'>Exit</button></div>`;
             } else {
                 z.innerHTML = `<button onclick='openAuthModal()' class='bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 px-3 py-1.5 rounded uppercase'>Login</button>`;
             }
